@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using WingsOn.Dal.Abstract;
@@ -72,6 +73,11 @@ namespace WingsOn.Dal
                     }
                 }
             });
+        }
+
+        public IEnumerable<Booking> GetBookings(string flightNumber)
+        {
+            return Repository.Where(booking => booking.Flight.Number == flightNumber);
         }
     }
 }

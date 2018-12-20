@@ -15,6 +15,7 @@ namespace WingsOn.Dal
         {
             airports = airportRepository;
             airlines = airlineRepository;
+
             CultureInfo cultureInfo = new CultureInfo("nl-NL");
 
             Repository.AddRange(new []
@@ -86,6 +87,11 @@ namespace WingsOn.Dal
                     Price = 416.17m
                 }
             });
+        }
+
+        public Flight GetByFlightNumber(string flightNumber)
+        {
+            return Repository.SingleOrDefault(flight => flight.Number == flightNumber);
         }
     }
 }

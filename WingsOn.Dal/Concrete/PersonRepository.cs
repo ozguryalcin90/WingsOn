@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using WingsOn.Dal.Abstract;
 using WingsOn.Domain;
 
@@ -7,7 +9,7 @@ namespace WingsOn.Dal
 {
     public class PersonRepository : RepositoryBase<Person>, IPersonRepository
     {
-        public PersonRepository() 
+        public PersonRepository()
         {
             CultureInfo cultureInfo = new CultureInfo("nl-NL");
 
@@ -113,6 +115,11 @@ namespace WingsOn.Dal
 		            Name = "Louise Harper"
                 }
             });
+        }
+
+        public IEnumerable<Person> GetByGender(GenderType gender)
+        {
+            return GetAll().Where(person => person.Gender == gender);
         }
     }
 }

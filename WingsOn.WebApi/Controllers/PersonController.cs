@@ -1,8 +1,6 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using WingsOn.Dal.Abstract;
 using WingsOn.Domain;
 
@@ -14,40 +12,61 @@ namespace WingsOn.WebApi.Controllers
     public class PersonController : ControllerBase
     {
         private IPersonRepository personRepository;
+        private IBookingRepository bookingRepository;
+        private IFlightRepository flightRepository;
 
-        public PersonController(IPersonRepository personRepository)
+        public PersonController(IPersonRepository personRepository, IBookingRepository bookingRepository, IFlightRepository flightRepository)
         {
             this.personRepository = personRepository;
-        }
-
-        [HttpGet]
-        public ActionResult<IEnumerable<Person>> Get()
-        {
-            return Ok(personRepository.GetAll());
+            this.bookingRepository = bookingRepository;
+            this.flightRepository = flightRepository;
         }
 
         [HttpGet("{id}")]
         public ActionResult<Person> Get(int id)
         {
-            return Ok(personRepository.Get(id));
+            Person person = personRepository.Get(id);
+
+            if (person == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(person);
         }
 
-        //// POST api/person
-        //[HttpPost]
-        //public void Post([FromBody] string value)
-        //{
-        //}
+        [HttpGet("gender/{gender}")]
+        public ActionResult<IEnumerable<Person>> GetByGender(string gender)
+        {
+            GenderType genderEnum;
 
-        //// PUT api/person/5
-        //[HttpPut("{id}")]
-        //public void Put(int id, [FromBody] string value)
-        //{
-        //}
+            if (!Enum.TryParse(gender, true, out genderEnum))
+            {
+                return NotFound();
+            }
 
-        //// DELETE api/person/5
-        //[HttpDelete("{id}")]
-        //public void Delete(int id)
-        //{
-        //}
+            return Ok(personRepository.GetByGender(genderEnum));
+        }
+
+        [HttpGet("flight/{flightNumber}")]
+        public ActionResult<IEnumerable<Person>> GetPassengers(string flightNumber)
+        {
+            Flight flight = flightRepository.GetByFlightNumber(flightNumber);
+
+            if (flight == null)
+            {
+                return NotFound();
+            }
+
+            List<Person> passengers = new List<Person>();
+            IEnumerable<Booking> bookings = bookingRepository.GetBookings(flightNumber);
+
+            foreach (var booking in bookings)
+            {
+                passengers.AddRange(booking.Passengers);
+            }
+
+            return Ok(passengers);
+        }
     }
 }
