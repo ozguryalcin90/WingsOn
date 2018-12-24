@@ -5,7 +5,7 @@ namespace WingsOn.Dal.Abstract
 {
     public interface IRepository<T> where T : DomainObject
     {
-        List<T> GetAll();
+        IEnumerable<T> GetAll();
 
         T Get(int id);
 

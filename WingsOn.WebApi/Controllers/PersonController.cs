@@ -12,14 +12,10 @@ namespace WingsOn.WebApi.Controllers
     public class PersonController : ControllerBase
     {
         private IPersonRepository personRepository;
-        private IBookingRepository bookingRepository;
-        private IFlightRepository flightRepository;
 
-        public PersonController(IPersonRepository personRepository, IBookingRepository bookingRepository, IFlightRepository flightRepository)
+        public PersonController(IPersonRepository personRepository)
         {
             this.personRepository = personRepository;
-            this.bookingRepository = bookingRepository;
-            this.flightRepository = flightRepository;
         }
 
         [HttpGet("{id}")]
@@ -42,31 +38,10 @@ namespace WingsOn.WebApi.Controllers
 
             if (!Enum.TryParse(gender, true, out genderEnum))
             {
-                return NotFound();
+                return BadRequest("Invalid gender value.");
             }
 
             return Ok(personRepository.GetByGender(genderEnum));
-        }
-
-        [HttpGet("flight/{flightNumber}")]
-        public ActionResult<IEnumerable<Person>> GetPassengers(string flightNumber)
-        {
-            Flight flight = flightRepository.GetByFlightNumber(flightNumber);
-
-            if (flight == null)
-            {
-                return NotFound();
-            }
-
-            List<Person> passengers = new List<Person>();
-            IEnumerable<Booking> bookings = bookingRepository.GetBookings(flightNumber);
-
-            foreach (var booking in bookings)
-            {
-                passengers.AddRange(booking.Passengers);
-            }
-
-            return Ok(passengers);
         }
     }
 }

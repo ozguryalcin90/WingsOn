@@ -14,7 +14,7 @@ namespace WingsOn.Dal
 
         protected List<T> Repository;
 
-        public List<T> GetAll()
+        public IEnumerable<T> GetAll()
         {
             return Repository;
         }
