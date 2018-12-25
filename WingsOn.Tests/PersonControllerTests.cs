@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,12 +13,16 @@ namespace WingsOn.Tests
     public class PersonControllerTests
     {
         private Mock<IPersonRepository> mockPersonRepository;
+        private Mock<ILogger<PersonController>> mockLogger;
+
         private PersonController personController;
 
         public PersonControllerTests()
         {
             mockPersonRepository = new Mock<IPersonRepository>();
-            personController = new PersonController(mockPersonRepository.Object);
+            mockLogger = new Mock<ILogger<PersonController>>();
+
+            personController = new PersonController(mockPersonRepository.Object, mockLogger.Object);
         }
 
         #region Get Method

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using WingsOn.Dal.Abstract;
 using WingsOn.Domain;
@@ -11,11 +12,16 @@ namespace WingsOn.WebApi.Controllers
     {
         private IFlightRepository flightRepository;
         private IBookingRepository bookingRepository;
+        private ILogger logger;
 
-        public BookingController(IFlightRepository flightRepository, IBookingRepository bookingRepository)
+        public BookingController(
+            IFlightRepository flightRepository, 
+            IBookingRepository bookingRepository,
+            ILogger<BookingController> logger)
         {
             this.flightRepository = flightRepository;
             this.bookingRepository = bookingRepository;
+            this.logger = logger;
         }
 
         [HttpGet("passengers/{flightNumber}")]
@@ -25,6 +31,7 @@ namespace WingsOn.WebApi.Controllers
 
             if (flight == null)
             {
+                logger.LogWarning("Invalid flight number: ", flightNumber);
                 return BadRequest("Invalid flight number.");
             }
 

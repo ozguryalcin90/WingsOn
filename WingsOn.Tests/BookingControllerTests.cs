@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using System.Collections.Generic;
 using WingsOn.Dal.Abstract;
@@ -12,6 +13,7 @@ namespace WingsOn.Tests
     {
         private Mock<IFlightRepository> mockFlightRepository;
         private Mock<IBookingRepository> mockBookingRepository;
+        private Mock<ILogger<BookingController>> mockLogger;
 
         private BookingController bookingController;
 
@@ -19,8 +21,9 @@ namespace WingsOn.Tests
         {
             mockFlightRepository = new Mock<IFlightRepository>();
             mockBookingRepository = new Mock<IBookingRepository>();
+            mockLogger = new Mock<ILogger<BookingController>>();
 
-            bookingController = new BookingController(mockFlightRepository.Object, mockBookingRepository.Object);
+            bookingController = new BookingController(mockFlightRepository.Object, mockBookingRepository.Object, mockLogger.Object);
         }
 
         #region GetPassengers Method

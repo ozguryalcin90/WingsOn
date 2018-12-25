@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using WingsOn.Dal.Abstract;
@@ -13,9 +14,14 @@ namespace WingsOn.WebApi.Controllers
     {
         private IPersonRepository personRepository;
 
-        public PersonController(IPersonRepository personRepository)
+        private readonly ILogger logger;
+
+        public PersonController(
+            IPersonRepository personRepository,
+            ILogger<PersonController> logger)
         {
             this.personRepository = personRepository;
+            this.logger = logger;
         }
 
         [HttpGet("{id}")]
@@ -25,6 +31,7 @@ namespace WingsOn.WebApi.Controllers
 
             if (person == null)
             {
+                logger.LogWarning("Person is not found. id: {0}", id);
                 return NotFound();
             }
 
@@ -38,6 +45,7 @@ namespace WingsOn.WebApi.Controllers
 
             if (!Enum.TryParse(gender, true, out genderEnum))
             {
+                logger.LogWarning("Invalid gender value entered: ", gender);
                 return BadRequest("Invalid gender value.");
             }
 
