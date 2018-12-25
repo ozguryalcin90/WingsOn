@@ -42,7 +42,7 @@ namespace WingsOn.Tests
             };
 
             mockFlightRepository.Setup(mock => mock.GetByFlightNumber("123")).Returns(mockFlight);
-            
+
             var result = bookingController.GetPassengers("123");
             Assert.IsType<OkObjectResult>(result.Result);
         }
