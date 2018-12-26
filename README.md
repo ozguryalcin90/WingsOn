@@ -4,12 +4,12 @@ This is a test project for Travix.
 
 Contains:
 
-# Swagger Page
+## Swagger Page
 - Index (https://localhost:44352/swagger/index.html)
 
-# Person API
+## Person API
 - Get Person (https://localhost:44352/api/person/{id})
 - GetAll Persons - with gender querystring - (https://localhost:44352/api/person)
 
-# Booking API
+## Booking API
 - Get all bookings of a Flight (https://localhost:44352/api/booking/passengers/{flightNumber})
