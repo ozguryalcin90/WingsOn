@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>WingsOn.WebApi</name>
+    </assembly>
+    <members>
+        <member name="M:WingsOn.WebApi.Controllers.BookingController.GetPassengers(System.String)">
+            <summary>
+            Gets all the passengers of a flight.
+            </summary>
+            <param name="flightNumber">The number of the desired flight.</param>
+            <returns></returns>
+        </member>
+        <member name="M:WingsOn.WebApi.Controllers.PersonController.Get(System.Int32)">
+            <summary>
+            Gets Person with id.
+            </summary>
+            <param name="id">The id of the desired Person</param>
+            <returns></returns>
+        </member>
+        <member name="M:WingsOn.WebApi.Controllers.PersonController.GetAll(System.String)">
+            <summary>
+            Gets all persons.
+            </summary>
+            <param name="gender">Gender filter</param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

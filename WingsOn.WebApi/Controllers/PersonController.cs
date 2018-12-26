@@ -24,6 +24,11 @@ namespace WingsOn.WebApi.Controllers
             this.logger = logger;
         }
 
+        /// <summary>
+        /// Gets Person with id.
+        /// </summary>
+        /// <param name="id">The id of the desired Person</param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         public ActionResult<Person> Get(int id)
         {
@@ -38,9 +43,19 @@ namespace WingsOn.WebApi.Controllers
             return Ok(person);
         }
 
-        [HttpGet("gender/{gender}")]
-        public ActionResult<IEnumerable<Person>> GetByGender(string gender)
+        /// <summary>
+        /// Gets all persons.
+        /// </summary>
+        /// <param name="gender">Gender filter</param>
+        /// <returns></returns>
+        [HttpGet]
+        public ActionResult<IEnumerable<Person>> GetAll(string gender)
         {
+            if (string.IsNullOrEmpty(gender))
+            {
+                return Ok(personRepository.GetAll());
+            }
+
             GenderType genderEnum;
 
             if (!Enum.TryParse(gender, true, out genderEnum))

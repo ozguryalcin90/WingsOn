@@ -57,41 +57,53 @@ namespace WingsOn.Tests
         }
         #endregion Get Method
 
-        #region GetByGender Method
+        #region GetAll Method
         [Fact]
-        public void GetByGender_IfGenderNotValid_ReturnsBadRequest()
+        public void GetAll_IfGenderNotValid_ReturnsBadRequest()
         {
-            var result = personController.GetByGender("invalidGender");
+            var result = personController.GetAll("invalidGender");
 
             Assert.IsType<BadRequestObjectResult>(result.Result);
         }
 
         [Fact]
-        public void GetByGender_WhenCalled_ReturnsOk()
+        public void GetAll_WhenCalled_ReturnsOk()
         {
-            var result = personController.GetByGender("female");
+            var result = personController.GetAll("female");
             Assert.IsType<OkObjectResult>(result.Result);
         }
 
         [Fact]
-        public void GetByGender_WhenCalled_ReturnsRightAmountOfMales()
+        public void GetAll_WhenCalled_ReturnsRightAmountOfPerson()
+        {
+            var mockPersons = new List<Person> { new Person { Gender = GenderType.Male }, new Person { Gender = GenderType.Male }, new Person { Gender = GenderType.Female } };
+            mockPersonRepository.Setup(mock => mock.GetAll()).Returns(mockPersons);
+
+            var result = personController.GetAll(string.Empty).Result as OkObjectResult;
+            var persons = Assert.IsType<List<Person>>(result.Value);
+
+            Assert.Equal(3, persons.Count());
+        }
+
+        [Fact]
+        public void GetAll_WhenCalledWithGender_ReturnsRightAmountOfMales()
         {
             var mockPersons = new List<Person> { new Person { Gender = GenderType.Male }, new Person { Gender = GenderType.Male }, new Person { Gender = GenderType.Female } };
             mockPersonRepository.Setup(mock => mock.GetByGender(GenderType.Male)).Returns(mockPersons);
 
-            var result = personController.GetByGender("male").Result as OkObjectResult;
+            var result = personController.GetAll("male").Result as OkObjectResult;
             var persons = Assert.IsType<List<Person>>(result.Value);
 
             Assert.Equal(2, persons.Where(person => person.Gender == GenderType.Male).Count());
         }
 
         [Fact]
-        public void GetByGender_WhenCalled_ReturnsRightAmountOfFemales()
+        public void GetAll_WhenCalledWithGender_ReturnsRightAmountOfFemales()
         {
             var mockPersons = new List<Person> { new Person { Gender = GenderType.Male }, new Person { Gender = GenderType.Male }, new Person { Gender = GenderType.Female } };
             mockPersonRepository.Setup(mock => mock.GetByGender(GenderType.Female)).Returns(mockPersons);
 
-            var result = personController.GetByGender("female").Result as OkObjectResult;
+            var result = personController.GetAll("female").Result as OkObjectResult;
             var persons = Assert.IsType<List<Person>>(result.Value);
 
             Assert.Equal(1, persons.Where(person => person.Gender == GenderType.Female).Count());

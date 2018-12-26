@@ -24,6 +24,11 @@ namespace WingsOn.WebApi.Controllers
             this.logger = logger;
         }
 
+        /// <summary>
+        /// Gets all the passengers of a flight.
+        /// </summary>
+        /// <param name="flightNumber">The number of the desired flight.</param>
+        /// <returns></returns>
         [HttpGet("passengers/{flightNumber}")]
         public ActionResult<IEnumerable<Person>> GetPassengers(string flightNumber)
         {
