@@ -32,7 +32,7 @@ namespace WingsOn.WebApi.Controllers
         [HttpGet("{id}")]
         public ActionResult<Person> Get(int id)
         {
-            Person person = personRepository.Get(id);
+            var person = personRepository.Get(id);
 
             if (person == null)
             {

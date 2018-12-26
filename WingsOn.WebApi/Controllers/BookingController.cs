@@ -32,7 +32,7 @@ namespace WingsOn.WebApi.Controllers
         [HttpGet("passengers/{flightNumber}")]
         public ActionResult<IEnumerable<Person>> GetPassengers(string flightNumber)
         {
-            Flight flight = flightRepository.GetByFlightNumber(flightNumber);
+            var flight = flightRepository.GetByFlightNumber(flightNumber);
 
             if (flight == null)
             {
@@ -40,7 +40,7 @@ namespace WingsOn.WebApi.Controllers
                 return BadRequest("Invalid flight number.");
             }
 
-            List<Person> passengers = new List<Person>();
+            var passengers = new List<Person>();
             IEnumerable<Booking> bookings = bookingRepository.GetBookings(flightNumber);
 
             foreach (var booking in bookings)
