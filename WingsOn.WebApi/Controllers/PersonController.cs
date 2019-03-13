@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using WingsOn.Dal.Abstract;
+using WingsOn.Application.Abstract;
 using WingsOn.Domain;
 
 namespace WingsOn.WebApi.Controllers
@@ -12,15 +12,15 @@ namespace WingsOn.WebApi.Controllers
     [ApiController]
     public class PersonController : ControllerBase
     {
-        private IPersonRepository personRepository;
+        private IPersonAppService personAppService;
 
         private readonly ILogger logger;
 
         public PersonController(
-            IPersonRepository personRepository,
+            IPersonAppService personAppService,
             ILogger<PersonController> logger)
         {
-            this.personRepository = personRepository;
+            this.personAppService = personAppService;
             this.logger = logger;
         }
 
@@ -32,15 +32,17 @@ namespace WingsOn.WebApi.Controllers
         [HttpGet("{id}")]
         public ActionResult<Person> Get(int id)
         {
-            var person = personRepository.Get(id);
-
-            if (person == null)
+            try
             {
-                logger.LogWarning("Person is not found. id: {0}", id);
+                var person = personAppService.Get(id);
+
+                return Ok(person);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.Message);
                 return NotFound();
             }
-
-            return Ok(person);
         }
 
         /// <summary>
@@ -51,20 +53,17 @@ namespace WingsOn.WebApi.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<Person>> GetAll(string gender)
         {
-            if (string.IsNullOrEmpty(gender))
+            try
             {
-                return Ok(personRepository.GetAll());
+                var personList = personAppService.GetByGender(gender);
+
+                return Ok(personList);
             }
-
-            GenderType genderEnum;
-
-            if (!Enum.TryParse(gender, true, out genderEnum))
+            catch (Exception ex)
             {
-                logger.LogWarning("Invalid gender value entered: ", gender);
-                return BadRequest("Invalid gender value.");
+                logger.LogError(ex.Message);
+                return BadRequest(ex.Message);
             }
-
-            return Ok(personRepository.GetByGender(genderEnum));
         }
     }
 }

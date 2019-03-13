@@ -7,9 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WingsOn.Dal", "WingsOn.Dal\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WingsOn.Domain", "WingsOn.Domain\WingsOn.Domain.csproj", "{F1792ED2-360F-4864-8A3D-3FAAE3E9FC4B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WingsOn.WebApi", "WingsOn.WebApi\WingsOn.WebApi.csproj", "{55E7954A-A855-4B45-B22B-6610A4BFD49F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WingsOn.WebApi", "WingsOn.WebApi\WingsOn.WebApi.csproj", "{55E7954A-A855-4B45-B22B-6610A4BFD49F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WingsOn.Tests", "WingsOn.Tests\WingsOn.Tests.csproj", "{940ECE60-4DF0-45A8-86ED-CED40E899BD9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WingsOn.Tests", "WingsOn.Tests\WingsOn.Tests.csproj", "{940ECE60-4DF0-45A8-86ED-CED40E899BD9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WingsOn.Application", "WingsOn.Application\WingsOn.Application.csproj", "{685AD6FF-2F03-4E79-B8AB-50A5B0793DBC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{940ECE60-4DF0-45A8-86ED-CED40E899BD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{940ECE60-4DF0-45A8-86ED-CED40E899BD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{940ECE60-4DF0-45A8-86ED-CED40E899BD9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{685AD6FF-2F03-4E79-B8AB-50A5B0793DBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{685AD6FF-2F03-4E79-B8AB-50A5B0793DBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{685AD6FF-2F03-4E79-B8AB-50A5B0793DBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{685AD6FF-2F03-4E79-B8AB-50A5B0793DBC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

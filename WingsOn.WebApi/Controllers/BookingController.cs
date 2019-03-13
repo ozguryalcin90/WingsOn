@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
-using WingsOn.Dal.Abstract;
+using WingsOn.Application.Abstract;
+using WingsOn.Application.Utility;
 using WingsOn.Domain;
 
 namespace WingsOn.WebApi.Controllers
@@ -10,17 +12,15 @@ namespace WingsOn.WebApi.Controllers
     [ApiController]
     public class BookingController : ControllerBase
     {
-        private IFlightRepository flightRepository;
-        private IBookingRepository bookingRepository;
-        private ILogger logger;
+        private IBookingAppService bookingAppService;
+
+        private readonly ILogger logger;
 
         public BookingController(
-            IFlightRepository flightRepository, 
-            IBookingRepository bookingRepository,
+            IBookingAppService bookingAppService,
             ILogger<BookingController> logger)
         {
-            this.flightRepository = flightRepository;
-            this.bookingRepository = bookingRepository;
+            this.bookingAppService = bookingAppService;
             this.logger = logger;
         }
 
@@ -29,26 +29,25 @@ namespace WingsOn.WebApi.Controllers
         /// </summary>
         /// <param name="flightNumber">The number of the desired flight.</param>
         /// <returns></returns>
-        [HttpGet("passengers/{flightNumber}")]
-        public ActionResult<IEnumerable<Person>> GetPassengers(string flightNumber)
+        [HttpGet("passengers/flights/{flightNumber}")]
+        public ActionResult<IEnumerable<Person>> Get(string flightNumber)
         {
-            var flight = flightRepository.GetByFlightNumber(flightNumber);
-
-            if (flight == null)
+            try
             {
-                logger.LogWarning("Invalid flight number: ", flightNumber);
-                return BadRequest("Invalid flight number.");
+                var passengers = bookingAppService.Get(flightNumber);
+
+                return Ok(passengers);
             }
-
-            var passengers = new List<Person>();
-            IEnumerable<Booking> bookings = bookingRepository.GetBookings(flightNumber);
-
-            foreach (var booking in bookings)
+            catch (EntityNotFoundException ex)
             {
-                passengers.AddRange(booking.Passengers);
+                logger.LogWarning(ex.Message);
+                return BadRequest(ex.Message);
             }
-
-            return Ok(passengers);
+            catch (Exception ex)
+            {
+                logger.LogError(ex.Message);
+                return StatusCode(500, ex.Message);
+            }
         }
     }
 }

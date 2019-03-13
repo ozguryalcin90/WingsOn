@@ -7,6 +7,9 @@ using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.IO;
 using System.Reflection;
+using WingsOn.Application;
+using WingsOn.Application.Abstract;
+using WingsOn.Application.Extensions;
 using WingsOn.Dal;
 using WingsOn.Dal.Abstract;
 
@@ -36,11 +39,10 @@ namespace WingsOn.WebApi
                 swagger.IncludeXmlComments(xmlPath);
             });
 
-            services.AddSingleton<IAirlineRepository, AirlineRepository>();
-            services.AddSingleton<IAirportRepository, AirportRepository>();
-            services.AddSingleton<IBookingRepository, BookingRepository>();
-            services.AddSingleton<IFlightRepository, FlightRepository>();
-            services.AddSingleton<IPersonRepository, PersonRepository>();
+            services.AddSingleton<IPersonAppService, PersonAppService>();
+            services.AddSingleton<IBookingAppService, BookingAppService>();
+
+            AppLayerServices.AddAppLayerServices(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
