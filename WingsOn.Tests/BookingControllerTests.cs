@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
+using System;
 using System.Collections.Generic;
-using WingsOn.Dal.Abstract;
+using WingsOn.Application.Abstract;
+using WingsOn.Application.Utility;
 using WingsOn.Domain;
 using WingsOn.WebApi.Controllers;
 using Xunit;
@@ -11,28 +13,26 @@ namespace WingsOn.Tests
 {
     public class BookingControllerTests
     {
-        private Mock<IFlightRepository> mockFlightRepository;
-        private Mock<IBookingRepository> mockBookingRepository;
+        private Mock<IBookingAppService> mockBookingAppService;
         private Mock<ILogger<BookingController>> mockLogger;
 
         private BookingController bookingController;
 
         public BookingControllerTests()
         {
-            mockFlightRepository = new Mock<IFlightRepository>();
-            mockBookingRepository = new Mock<IBookingRepository>();
+            mockBookingAppService = new Mock<IBookingAppService>();
             mockLogger = new Mock<ILogger<BookingController>>();
 
-            bookingController = new BookingController(mockFlightRepository.Object, mockBookingRepository.Object, mockLogger.Object);
+            bookingController = new BookingController(mockBookingAppService.Object, mockLogger.Object);
         }
 
         #region GetPassengers Method
         [Fact]
         public void GetPassengers_IfFlightNotFound_ReturnsNotFound()
         {
-            mockFlightRepository.Setup(mock => mock.GetByFlightNumber("123")).Returns<StatusCodeResult>(null);
+            mockBookingAppService.Setup(mock => mock.Get("123")).Throws<EntityNotFoundException>();
 
-            var result = bookingController.GetPassengers("123");
+            var result = bookingController.Get("123");
             Assert.IsType<BadRequestObjectResult>(result.Result);
         }
 
@@ -44,38 +44,22 @@ namespace WingsOn.Tests
                 Number = "123"
             };
 
-            mockFlightRepository.Setup(mock => mock.GetByFlightNumber("123")).Returns(mockFlight);
+            mockBookingAppService.Setup(mock => mock.Get("123")).Returns(new List<Person>());
 
-            var result = bookingController.GetPassengers("123");
+            var result = bookingController.Get("123");
             Assert.IsType<OkObjectResult>(result.Result);
         }
 
         [Fact]
         public void GetPassengers_WhenCalled_ReturnsRightPassengers()
         {
-            Flight mockFlight = new Flight
+            var passengers = new List<Person>()
             {
-                Number = "123"
+                new Person(){Id = 1},
+                new Person(){Id = 2}
             };
 
-            mockFlightRepository.Setup(mock => mock.GetByFlightNumber("123")).Returns(mockFlight);
-
-            List<Booking> mockBookings = new List<Booking>
-            {
-                new Booking {
-                    Flight = mockFlight,
-                    Passengers = new List<Person>
-                    {
-                        new Person(),
-                        new Person()
-                    }
-                }
-            };
-
-            mockBookingRepository.Setup(mock => mock.GetBookings("123")).Returns(mockBookings);
-
-            var result = bookingController.GetPassengers("123").Result as OkObjectResult;
-            List<Person> passengers = Assert.IsType<List<Person>>(result.Value);
+            mockBookingAppService.Setup(mock => mock.Get("123")).Returns(passengers);
 
             Assert.Equal(2, passengers.Count);
         }

@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using WingsOn.Dal.Abstract;
+using WingsOn.Application.Abstract;
+using WingsOn.Application.Utility;
 using WingsOn.Domain;
 using WingsOn.WebApi.Controllers;
 using Xunit;
@@ -12,24 +14,24 @@ namespace WingsOn.Tests
 {
     public class PersonControllerTests
     {
-        private Mock<IPersonRepository> mockPersonRepository;
+        private Mock<IPersonAppService> mockPersonAppService;
         private Mock<ILogger<PersonController>> mockLogger;
 
         private PersonController personController;
 
         public PersonControllerTests()
         {
-            mockPersonRepository = new Mock<IPersonRepository>();
+            mockPersonAppService = new Mock<IPersonAppService>();
             mockLogger = new Mock<ILogger<PersonController>>();
 
-            personController = new PersonController(mockPersonRepository.Object, mockLogger.Object);
+            personController = new PersonController(mockPersonAppService.Object, mockLogger.Object);
         }
 
         #region Get Method
         [Fact]
         public void Get_IfPersonNotFound_ReturnsNotFound()
         {
-            mockPersonRepository.Setup(mock => mock.Get(1)).Returns<StatusCodeResult>(null);
+            mockPersonAppService.Setup(mock => mock.Get(1)).Throws<EntityNotFoundException>();
 
             var result = personController.Get(1).Result;
             Assert.IsType<NotFoundResult>(result);
@@ -38,7 +40,7 @@ namespace WingsOn.Tests
         [Fact]
         public void Get_WhenCalled_ReturnsOk()
         {
-            mockPersonRepository.Setup(mock => mock.Get(1)).Returns(new Person());
+            mockPersonAppService.Setup(mock => mock.Get(1)).Returns(new Person());
 
             var result = personController.Get(1);
             Assert.IsType<OkObjectResult>(result.Result);
@@ -48,7 +50,7 @@ namespace WingsOn.Tests
         public void Get_WhenCalled_ReturnsRightPerson()
         {
             var person = new Person() { Id = 1 };
-            mockPersonRepository.Setup(mock => mock.Get(1)).Returns(person);
+            mockPersonAppService.Setup(mock => mock.Get(1)).Returns(person);
 
             var result = personController.Get(1).Result as OkObjectResult;
             var resultPerson = Assert.IsType<Person>(result.Value);
@@ -57,41 +59,39 @@ namespace WingsOn.Tests
         }
         #endregion Get Method
 
-        #region GetAll Method
+        #region GetByGender Method
+        [Fact]
+        public void GetAll_IfGenderIsMissing_ReturnsBadRequest()
+        {
+            mockPersonAppService.Setup(mock => mock.GetByGender("")).Throws<ArgumentNullException>();
+
+            var result = personController.GetByGender("");
+            Assert.IsType<BadRequestObjectResult>(result.Result);
+        }
+
         [Fact]
         public void GetAll_IfGenderNotValid_ReturnsBadRequest()
         {
-            var result = personController.GetAll("invalidGender");
+            mockPersonAppService.Setup(mock => mock.GetByGender("invalidGender")).Throws<ArgumentNullException>();
 
+            var result = personController.GetByGender("invalidGender");
             Assert.IsType<BadRequestObjectResult>(result.Result);
         }
 
         [Fact]
         public void GetAll_WhenCalled_ReturnsOk()
         {
-            var result = personController.GetAll("female");
+            var result = personController.GetByGender("female");
             Assert.IsType<OkObjectResult>(result.Result);
-        }
-
-        [Fact]
-        public void GetAll_WhenCalled_ReturnsRightAmountOfPerson()
-        {
-            var mockPersons = new List<Person> { new Person { Gender = GenderType.Male }, new Person { Gender = GenderType.Male }, new Person { Gender = GenderType.Female } };
-            mockPersonRepository.Setup(mock => mock.GetAll()).Returns(mockPersons);
-
-            var result = personController.GetAll(string.Empty).Result as OkObjectResult;
-            var persons = Assert.IsType<List<Person>>(result.Value);
-
-            Assert.Equal(3, persons.Count());
         }
 
         [Fact]
         public void GetAll_WhenCalledWithGender_ReturnsRightAmountOfMales()
         {
             var mockPersons = new List<Person> { new Person { Gender = GenderType.Male }, new Person { Gender = GenderType.Male }, new Person { Gender = GenderType.Female } };
-            mockPersonRepository.Setup(mock => mock.GetByGender(GenderType.Male)).Returns(mockPersons);
+            mockPersonAppService.Setup(mock => mock.GetByGender("male")).Returns(mockPersons);
 
-            var result = personController.GetAll("male").Result as OkObjectResult;
+            var result = personController.GetByGender("male").Result as OkObjectResult;
             var persons = Assert.IsType<List<Person>>(result.Value);
 
             Assert.Equal(2, persons.Where(person => person.Gender == GenderType.Male).Count());
@@ -101,9 +101,9 @@ namespace WingsOn.Tests
         public void GetAll_WhenCalledWithGender_ReturnsRightAmountOfFemales()
         {
             var mockPersons = new List<Person> { new Person { Gender = GenderType.Male }, new Person { Gender = GenderType.Male }, new Person { Gender = GenderType.Female } };
-            mockPersonRepository.Setup(mock => mock.GetByGender(GenderType.Female)).Returns(mockPersons);
+            mockPersonAppService.Setup(mock => mock.GetByGender("female")).Returns(mockPersons);
 
-            var result = personController.GetAll("female").Result as OkObjectResult;
+            var result = personController.GetByGender("female").Result as OkObjectResult;
             var persons = Assert.IsType<List<Person>>(result.Value);
 
             Assert.Equal(1, persons.Where(person => person.Gender == GenderType.Female).Count());

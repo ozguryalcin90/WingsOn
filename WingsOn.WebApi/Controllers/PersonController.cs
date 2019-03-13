@@ -46,12 +46,12 @@ namespace WingsOn.WebApi.Controllers
         }
 
         /// <summary>
-        /// Gets all persons.
+        /// Gets all persons with given gender value.
         /// </summary>
         /// <param name="gender">Gender filter</param>
         /// <returns></returns>
         [HttpGet]
-        public ActionResult<IEnumerable<Person>> GetAll(string gender)
+        public ActionResult<IEnumerable<Person>> GetByGender(string gender)
         {
             try
             {
