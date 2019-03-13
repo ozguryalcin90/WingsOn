@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
-using System;
 using System.Collections.Generic;
 using WingsOn.Application.Abstract;
 using WingsOn.Application.Utility;
@@ -28,7 +27,7 @@ namespace WingsOn.Tests
 
         #region GetPassengers Method
         [Fact]
-        public void GetPassengers_IfFlightNotFound_ReturnsNotFound()
+        public void GetPassengers_IfFlightNotFound_ReturnsBadRequest()
         {
             mockBookingAppService.Setup(mock => mock.Get("123")).Throws<EntityNotFoundException>();
 
@@ -53,13 +52,16 @@ namespace WingsOn.Tests
         [Fact]
         public void GetPassengers_WhenCalled_ReturnsRightPassengers()
         {
-            var passengers = new List<Person>()
+            var mockPassengers = new List<Person>()
             {
                 new Person(){Id = 1},
                 new Person(){Id = 2}
             };
 
-            mockBookingAppService.Setup(mock => mock.Get("123")).Returns(passengers);
+            mockBookingAppService.Setup(mock => mock.Get("123")).Returns(mockPassengers);
+
+            var result = bookingController.Get("123").Result as OkObjectResult;
+            var passengers = Assert.IsType<List<Person>>(result.Value);
 
             Assert.Equal(2, passengers.Count);
         }

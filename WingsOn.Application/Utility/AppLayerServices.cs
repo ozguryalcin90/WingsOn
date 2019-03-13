@@ -8,11 +8,11 @@ namespace WingsOn.Application.Extensions
     {
         public static IServiceCollection AddAppLayerServices(this IServiceCollection services)
         {
-            services.AddSingleton<IAirlineRepository, AirlineRepository>();
-            services.AddSingleton<IAirportRepository, AirportRepository>();
-            services.AddSingleton<IBookingRepository, BookingRepository>();
-            services.AddSingleton<IFlightRepository, FlightRepository>();
-            services.AddSingleton<IPersonRepository, PersonRepository>();
+            services.AddTransient<IAirlineRepository, AirlineRepository>();
+            services.AddTransient<IAirportRepository, AirportRepository>();
+            services.AddTransient<IBookingRepository, BookingRepository>();
+            services.AddTransient<IFlightRepository, FlightRepository>();
+            services.AddTransient<IPersonRepository, PersonRepository>();
 
             return services;
         }

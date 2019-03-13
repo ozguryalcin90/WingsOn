@@ -10,8 +10,6 @@ using System.Reflection;
 using WingsOn.Application;
 using WingsOn.Application.Abstract;
 using WingsOn.Application.Extensions;
-using WingsOn.Dal;
-using WingsOn.Dal.Abstract;
 
 namespace WingsOn.WebApi
 {
@@ -39,8 +37,8 @@ namespace WingsOn.WebApi
                 swagger.IncludeXmlComments(xmlPath);
             });
 
-            services.AddSingleton<IPersonAppService, PersonAppService>();
-            services.AddSingleton<IBookingAppService, BookingAppService>();
+            services.AddTransient<IPersonAppService, PersonAppService>();
+            services.AddTransient<IBookingAppService, BookingAppService>();
 
             AppLayerServices.AddAppLayerServices(services);
         }

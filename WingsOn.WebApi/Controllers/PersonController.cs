@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using WingsOn.Application.Abstract;
+using WingsOn.Application.Utility;
 using WingsOn.Domain;
 
 namespace WingsOn.WebApi.Controllers
@@ -50,7 +51,7 @@ namespace WingsOn.WebApi.Controllers
         /// </summary>
         /// <param name="gender">Gender filter</param>
         /// <returns></returns>
-        [HttpGet]
+        [HttpGet("passengers/genders/{gender}")]
         public ActionResult<IEnumerable<Person>> GetByGender(string gender)
         {
             try
@@ -59,10 +60,15 @@ namespace WingsOn.WebApi.Controllers
 
                 return Ok(personList);
             }
+            catch (EntityNotFoundException ex)
+            {
+                logger.LogWarning(ex.Message);
+                return BadRequest(ex.Message);
+            }
             catch (Exception ex)
             {
                 logger.LogError(ex.Message);
-                return BadRequest(ex.Message);
+                return StatusCode(500, ex.Message);
             }
         }
     }
